@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fetch Firebase Data in Table</title>
+<style>
+  body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background: linear-gradient(135deg, #ffe4e1, #f0e68c); 
+    color: #333;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  h1 {
+    text-align: center;
+    font-family: 'Brush Script MT', cursive;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    color: #d2691e;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  }
+
+  table {
+    width: 90%;
+    border-collapse: collapse;
+    background-color: #fffaf0;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  }
+
+  thead {
+    background: linear-gradient(45deg, #ff7f50, #ff69b4);
+  }
+
+  th, td {
+    padding: 12px;
+    border: 2px dashed #ffa07a;
+    text-align: left;
+    font-family: 'Comic Sans MS', cursive;
+    font-size: 1.1rem;
+  }
+
+  th {
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: #fff0f5;
+  }
+
+  tbody tr:nth-child(odd) {
+    background-color: #ffe4e1;
+  }
+
+  /* Responsive adjustments */
+  @media(max-width: 768px){
+    table {
+      font-size: 0.9rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>Personal Details </h1>
+
+<table id="data-table">
+  <thead>
+    <tr>
+      <th>Roll No</th>
+      <th>Name</th>
+      <th>Gender</th>
+      <th>Address</th>
+      <th>Email</th>
+      <th>Language</th>
+      <th>Number</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td colspan="7" style="text-align:center;">Loading data...</td></tr>
+  </tbody>
+</table>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+  // Your Firebase configuration (replace with your actual config)
+  const firebaseConfig = {
+    apiKey: "AIzaSyA-RdAbepaa00EibKWW_CS43uEAwubNn58",
+    authDomain: "logindb-dcea6.firebaseapp.com",
+    databaseURL: "https://logindb-dcea6-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "logindb-dcea6",
+    storageBucket: "logindb-dcea6.firebasestorage.app",
+    messagingSenderId: "616797320496",
+    appId: "1:616797320496:web:06a3ccc1e931750faf44f5"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  const database = firebase.database();
+
+  const dataRef = database.ref('student');
+
+  // Fetch data and populate table
+  dataRef.once('value')
+    .then((snapshot) => {
+      const data = snapshot.val();
+      const tbody = document.querySelector('#data-table tbody');
+
+      // Clear existing rows
+      tbody.innerHTML = '';
+
+      if (data) {
+        Object.keys(data).forEach((key) => {
+          const item = data[key];
+          const row = document.createElement('tr');
+
+          // Create cells
+          const rollnoCell = document.createElement('td');
+          rollnoCell.textContent = item.rollno;
+
+          const nameCell = document.createElement('td');
+          nameCell.textContent = item.name;
+
+          const genderCell = document.createElement('td');
+          genderCell.textContent = item.gender;
+
+          const addressCell = document.createElement('td');
+          addressCell.textContent = item.address;
+
+          const emailCell = document.createElement('td');
+          emailCell.textContent = item.email;
+
+          const languageCell = document.createElement('td');
+          languageCell.textContent = item.language;
+
+          const numberCell = document.createElement('td');
+          numberCell.textContent = item.number;
+
+          // Append cells
+          row.appendChild(rollnoCell);
+          row.appendChild(nameCell);
+          row.appendChild(genderCell);
+          row.appendChild(addressCell);
+          row.appendChild(emailCell);
+          row.appendChild(languageCell);
+          row.appendChild(numberCell);
+
+          tbody.appendChild(row);
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No data available.</td></tr>';
+      }
+    })
+    .catch((error) => {
+      const tbody = document.querySelector('#data-table tbody');
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Error: ${error}</td></tr>`;
+    });
+</script>
+
+</body>
+</html>
